@@ -8,3 +8,10 @@ dist
 *.egg-info
 _mailinglist
 .tox
+bin/
+lib/
+share/
+include/
+.Python
+tinker/
+leaderboard.sqlite

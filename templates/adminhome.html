@@ -1,0 +1,27 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<script type=text/javascript>
+  $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script>
+
+<script type=text/javascript>
+  $(function() {
+    $('button#vote').bind('click', function() {
+      $.putJSON($SCRIPT_ROOT + '/api/presentation/11/',
+	  function(data) {
+        $("#result").text(data.result);
+      });
+      return false;
+    });
+  });
+</script>
+
+	{% autoescape false %}
+		{{leaderb}}
+	{% endautoescape %}
+
+{% endblock %}
