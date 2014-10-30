@@ -9,16 +9,41 @@
 </script>
 
 <script type=text/javascript>
+	resetAllScores = function(){
+		var resetAllScores_url = "/api/presentation/";
+		console.log("resetting all scores");
+		$.ajax(resetAllScores_url, {
+			type: 'GET',
+			data: {},
+			success:function(data){
+
+				$.each(data, function(idx, obj){ 
+					$.each(obj, function(key, value){
+						console.log(obj);
+						// console.log(key + ": " + value);
+						var target = "#result_"+ obj.presentation_id;
+						$(target).text(obj.score);
+					});
+				});				   
+
+			}
+			// error:function(jqXhr, statusText, error){
+				//   console.log(statusText, error);
+				// }
+			}
+	)};
+
 	addVote = function(rID){
-		var addvote_url = "/api/presentation/" + rID + "/";
+		var addVote_url = "/api/presentation/" + rID + "/";
 		console.log("adding a vote");
-		$.ajax(addvote_url, {
+		$.ajax(addVote_url, {
 			type: 'PUT',
 			data: {},
 			success:function(data){
 				console.log(data);
-				var target = "#result_"+ data.presentation_id;
-				$(target).text(data.score);
+				// var target = "#result_"+ data.presentation_id;
+				// $(target).text(data.score);
+				resetAllScores();
 				// Example.show("Your Vote Has Been counted!");
 				// stationinfoWindow.close(map,this);
 			}
@@ -28,10 +53,8 @@
 			}
 		)};
 
+
 </script>
-
-
-
 
 	{% autoescape false %}
 		{{leaderb}}

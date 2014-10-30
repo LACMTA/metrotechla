@@ -232,15 +232,6 @@ security = Security(app, user_datastore)
 # 	user_datastore.create_user(email='rotten@metro.net', password='rotten@metro.net')
 
 
-"""
-USER properties and methods
-'active', 'alias', 'confirmed_at', 'create', 'create_table', 'delete', 'delete_instance', 
-'dependencies', 'dirty_fields', 'drop_table', 'email', 'filter', 'get', 'get_auth_token', 'get_id', 
-'get_or_create', 'has_role', 'id', 'insert', 'insert_from', 'insert_many', 'is_active', 
-'is_anonymous', 'is_authenticated', 'is_dirty', 'participantvote', 'password', 'prepared', 
-'raw', 'roles', 'save', 'select', 'set_id', 'sqlall', 'table_exists', 'update'
-"""
-
 ## LOAD DATA
 # @app.before_first_request
 def load_data():
@@ -588,7 +579,7 @@ class PresentationList(Resource):
 				'score':l.score,
 				'session':l.sessn.title,
 				'vendor':l.vendor.title,
-				'score':l.score,
+				'score':l.get_score(),
 				'slug':l.slug,
 			} 
 			for l in mps]
