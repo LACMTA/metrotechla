@@ -78,6 +78,14 @@ class User(BaseModel, UserMixin):
 			return 0
 
 	@property
+	def myvotes(self):
+		vtlist = []
+		for v in Vote.select().where(Vote.participant==self):
+			myd = {'track':str(v.sessn.track),'session':str(v.sessn),'presentation':str(v.presentation),'vendor':str(v.presentation.vendor)}
+			vtlist.append(myd)
+		return json.dumps(vtlist)
+
+	@property
 	def admin(self):
 		return self.has_role('admin')
 
@@ -192,9 +200,10 @@ class Vote(BaseModel):
 	participant = ForeignKeyField(User, related_name='participantvote')
 	timestamp = DateTimeField(default=datetime.datetime.now)
 
-	def __init__(self,sessn,presentation,participant):
+	def create(self,sessn,presentation,participant):
 		print "has %s voted for presentation %s in session %s ?" %(participant,presentation,sessn)
-		super(Vote, self).__init__()
+		# super(Vote, self).__init__()
+		super(Vote, self).save(*args, **kwargs)
 		if not participant.has_voted(sessn):
 			print "Record this vote"
 			self.sessn = sessn
@@ -213,7 +222,7 @@ class Vote(BaseModel):
 		return 	self.presentation.vendor
 
 	def __unicode__(self):
-		return '%s voted for %s in presentation %s' % (self.participant.__unicode__(), self.participant, self.presentation)
+		return '%s voted for presentation %s in session %s' % (self.participant.__unicode__(), self.presentation, self.sessn)
 
 	def __repr__(self):
 		return '<Vote User %r, Presentation %r>' % (self.participant, self.presentation)
@@ -609,7 +618,7 @@ def home():
 				vendortitle = vendr.__unicode__()
 				vendorct = Vote.select().where(Vote.presentation==p,Vote.sessn==s).count()
 				printme = printme + "<H4>%s: %d</H4>" %(vendortitle,vendorct)
-	return render_template('index.html', leaderb=printme)
+	return render_template('index.html', leaderb=printme, current_user=current_user)
 
 @app.route('/flask')
 def hello_world():
