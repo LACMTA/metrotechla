@@ -352,7 +352,7 @@ class MyHomeView(AdminIndexView):
 					vendr = p.vendor
 					vendortitle = vendr.__unicode__()
 					vendorct = Vote.select().where(Vote.presentation==p,Vote.sessn==s).count()
-					printme = printme + "<H4>%s: %d</H4><button id='vote' class='btn'>vote</button><span id=result>?</span>" %(vendortitle,vendorct)
+					printme = printme + "<H4>%s: <span id='result_%s'>%d</span></H4><a id='myLink' href='#' onclick='addVote(%s);return false;'>[vote]</a>" %(vendortitle,p.id,vendorct,p.id)
 		return self.render('adminhome.html', leaderb=printme)
 
 
@@ -623,7 +623,6 @@ def home():
 @app.route('/flask')
 def hello_world():
 	return 'This comes from Flask ^_^'
-
 
 if __name__ == '__main__':
 	import logging

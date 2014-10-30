@@ -9,16 +9,29 @@
 </script>
 
 <script type=text/javascript>
-  $(function() {
-    $('button#vote').bind('click', function() {
-      $.putJSON($SCRIPT_ROOT + '/api/presentation/11/',
-	  function(data) {
-        $("#result").text(data.result);
-      });
-      return false;
-    });
-  });
+	addVote = function(rID){
+		var addvote_url = "/api/presentation/" + rID + "/";
+		console.log("adding a vote");
+		$.ajax(addvote_url, {
+			type: 'PUT',
+			data: {},
+			success:function(data){
+				console.log(data);
+				var target = "#result_"+ data.presentation_id;
+				$(target).text(data.score);
+				// Example.show("Your Vote Has Been counted!");
+				// stationinfoWindow.close(map,this);
+			}
+			// error:function(jqXhr, statusText, error){
+				//   console.log(statusText, error);
+				// }
+			}
+		)};
+
 </script>
+
+
+
 
 	{% autoescape false %}
 		{{leaderb}}
