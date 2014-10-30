@@ -2,7 +2,7 @@
 
 {% block body %}
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
 <script type=text/javascript>
   $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
@@ -55,6 +55,11 @@
 
 
 </script>
+
+you are logged in as: {{current_user}}
+<br />
+<!-- your votes: {{current_user.myvotes}} -->
+
 
 	{% autoescape false %}
 		{{leaderb}}
