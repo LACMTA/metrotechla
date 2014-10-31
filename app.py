@@ -79,11 +79,12 @@ class User(BaseModel, UserMixin):
 
 	@property
 	def myvotes(self):
-		vtlist = []
-		for v in Vote.select().where(Vote.participant==self):
-			myd = {'track':str(v.sessn.track),'session':str(v.sessn),'presentation':str(v.presentation),'vendor':str(v.presentation.vendor)}
-			vtlist.append(myd)
-		return json.dumps(vtlist)
+		# vtlist = []
+		# for v in Vote.select().where(Vote.participant==self):
+		# 	myd = {'track':str(v.sessn.track),'session':str(v.sessn),'presentation':str(v.presentation),'vendor':str(v.presentation.vendor)}
+		# 	vtlist.append(myd)
+		# return json.dumps(vtlist)
+		return 1
 
 	@property
 	def admin(self):
@@ -200,10 +201,26 @@ class Vote(BaseModel):
 	participant = ForeignKeyField(User, related_name='participantvote')
 	timestamp = DateTimeField(default=datetime.datetime.now)
 
-	def create(self,sessn,presentation,participant):
+	# def create(self,sessn,presentation,participant):
+	# 	print "has %s voted for presentation %s in session %s ?" %(participant,presentation,sessn)
+	# 	# super(Vote, self).__init__()
+	# 	super(Vote, self).save(*args, **kwargs)
+	# 	if not participant.has_voted(sessn):
+	# 		print "Record this vote"
+	# 		self.sessn = sessn
+	# 		self.presentation = presentation
+	# 		self.participant = participant
+	# 	else:
+	# 		# myvote = Vote.select().where(Vote.sessn==sessn,Vote.participant==participant).get()
+	# 		# OR: we could also change the vote here:
+	# 		print "ok, we changed %s's vote in session %s to presentation %s" %(participant,sessn,presentation)
+	# 		self.sessn = sessn
+	# 		self.presentation = presentation
+	# 		self.participant = participant
+
+	def __init__(self,sessn,presentation,participant):
 		print "has %s voted for presentation %s in session %s ?" %(participant,presentation,sessn)
-		# super(Vote, self).__init__()
-		super(Vote, self).save(*args, **kwargs)
+		super(Vote, self).__init__()
 		if not participant.has_voted(sessn):
 			print "Record this vote"
 			self.sessn = sessn
