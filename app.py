@@ -1,5 +1,4 @@
 import datetime
-import simplejson as json
 from flask import (
 	Flask,
 	# Blueprint,
@@ -26,7 +25,6 @@ from peewee import (
 	DateTimeField,
 	SqliteDatabase,
 	)
-from utils import slugify
 from flask.ext.admin import Admin, BaseView, expose, AdminIndexView
 from flask.ext.admin.contrib.peewee import ModelView
 from flask.ext.security import (
@@ -39,6 +37,9 @@ from flask.ext.security import (
 from flask_security.core import current_user
 from flask_security.utils import logout_user
 from flask_restful_swagger import swagger
+import simplejson as json
+
+from utils import slugify
 
 db = SqliteDatabase('leaderboard.sqlite', check_same_thread=False)
 
@@ -68,6 +69,14 @@ class User(BaseModel, UserMixin):
 	password = TextField()
 	active = BooleanField(default=True)
 	confirmed_at = DateTimeField(null=True)
+	first_name = TextField(null=True)
+	last_name = TextField(null=True)
+	affiliation = TextField(null=True)
+
+	def checkin(self):
+		"""Hit this on login"""
+		self.confirmed_at = datetime.datetime.now
+		self.save()
 
 	def has_voted(self,sessn):
 		print "get vote count for session %s and participant %s" %(sessn,self)
@@ -81,7 +90,7 @@ class User(BaseModel, UserMixin):
 	def myvotes(self):
 		# vtlist = []
 		# for v in Vote.select().where(Vote.participant==self):
-		# 	myd = {'track':str(v.sessn.track),'session':str(v.sessn),'presentation':str(v.presentation),'vendor':str(v.presentation.vendor)}
+		# 	myd = {'track':str(v.sessn.track), 'session':str(v.sessn), 'presentation':str(v.presentation), 'vendor':str(v.presentation.vendor)}
 		# 	vtlist.append(myd)
 		# return json.dumps(vtlist)
 		return 1
@@ -248,105 +257,6 @@ class Vote(BaseModel):
 # Setup Flask-Security
 user_datastore = PeeweeUserDatastore(db, User, Role, UserRoles)
 security = Security(app, user_datastore)
-
-# Create a user to test with
-# @app.before_first_request
-# def create_user():
-# 	for Model in (Role, User, UserRoles):
-# 		Model.drop_table(fail_silently=True)
-# 		Model.create_table(fail_silently=True)
-# 	user_datastore.create_user(email='rotten@metro.net', password='rotten@metro.net')
-
-
-## LOAD DATA
-# @app.before_first_request
-def load_data():
-	admin=User.create(email='goodwind@metro.net', password='admin')
-	
-	admin_role=Role(name='admin',description='')
-	admin_role.save()
-	participant_role=Role(name='participant',description='')
-	participant_role.save()
-	
-	admin_admin=UserRoles(user=admin,role=admin_role)
-	admin_admin.save()
-	
-	john=User.create(email=u'john@metro.net',password=u'john@metro.net')
-	paul=User.create(email=u'paul@metro.net',password=u'paul@metro.net')
-	george=User.create(email=u'george@metro.net',password=u'george@metro.net')
-	ringo=User.create(email=u'ringo@metro.net',password=u'ringo@metro.net')
-
-	john_participant=UserRoles(user=john,role=participant_role)
-	john_participant.save()
-	paul_participant=UserRoles(user=paul,role=participant_role)
-	paul_participant.save()
-	george_participant=UserRoles(user=george,role=participant_role)
-	george_participant.save()
-	ringo_participant=UserRoles(user=ringo,role=participant_role)
-	ringo_participant.save()
-
-	track_m=Track.create(title=u'Multi-Modal Integration')
-	track_f=Track.create(title=u'Station of the Future')
-	track_n=Track.create(title=u'Next Generation Trip Planning and Fare Payments')
-
-	sessn_bs=Sessn.create(title=u'Bike Sharing',track=track_m)
-	sessn_cs=Sessn.create(title=u'Car Sharing',track=track_m)
-	sessn_av=Sessn.create(title=u'Autonomous Vehicles',track=track_m)
-	sessn_va=Sessn.create(title=u'Virtual Agents/Kiosks/Wayfinding',track=track_f)
-	sessn_cse=Sessn.create(title=u'Concierge Services',track=track_f)
-	sessn_wc=Sessn.create(title=u'Wireless Connectivity',track=track_f)
-	sessn_st=Sessn.create(title=u'Smart Trip Planning',track=track_n)
-	sessn_ga=Sessn.create(title=u'Gamification and Loyalty Programs',track=track_n)
-	sessn_ng=Sessn.create(title=u'Next Generation Fare Payments',track=track_n)
-
-	vendor_ac=Vendor.create(title=u'Accenture')
-	vendor_an=Vendor.create(title=u'Aruba Networks')
-	vendor_ca=Vendor.create(title=u'CHK America')
-	vendor_cg=Vendor.create(title=u'Control Group')
-	vendor_cp=Vendor.create(title=u'CradlePoint')
-	vendor_cs=Vendor.create(title=u'Cambridge Systematics')
-	vendor_gg=Vendor.create(title=u'Giro')
-	vendor_gv=Vendor.create(title=u'Global VP')
-	vendor_ks=Vendor.create(title=u'Kaonsoft')
-	vendor_sb=Vendor.create(title=u'Social Bicycles')
-	vendor_sp=Vendor.create(title=u'SinglePoint')
-	vendor_tc=Vendor.create(title=u'TransitVue Communications')
-	vendor_tg=Vendor.create(title=u'Trapeze Group')
-	vendor_tk=Vendor.create(title=u'T-Kartor USA')
-	vendor_xt=Vendor.create(title=u'Xerox Transportation Services')
-
-	pres_av_ac=Presentation.create(title=u'accenture on autonomous vehicles',sessn=sessn_av,vendor=vendor_ac)
-	pres_av_cg=Presentation.create(title=u'control group autonomous',sessn=sessn_av,vendor=vendor_cg)
-	pres_bs_cg=Presentation.create(title=u'control group on bike sharing',sessn=sessn_bs,vendor=vendor_cg)
-	pres_bs_sb=Presentation.create(title=u'bicycles are social',sessn=sessn_bs,vendor=vendor_sb)
-	pres_cse_ac=Presentation.create(title=u'accenture on concierge servs',sessn=sessn_cse,vendor=vendor_ac)
-	pres_cse_cg=Presentation.create(title=u'control group concierge',sessn=sessn_cse,vendor=vendor_cg)
-	pres_cs_cg=Presentation.create(title=u'control group on car sharing',sessn=sessn_cs,vendor=vendor_cg)
-	pres_cs_cs=Presentation.create(title=u'cambridge systematics on car sharing',sessn=sessn_cs,vendor=vendor_cs)
-	pres_ga_ac=Presentation.create(title=u'accenture on gamification',sessn=sessn_ga,vendor=vendor_ac)
-	pres_ng_ac=Presentation.create(title=u'accenture on next gen fare paytments',sessn=sessn_ng,vendor=vendor_ac)
-	pres_ng_cg=Presentation.create(title=u'control group on next gen fare payments',sessn=sessn_ng,vendor=vendor_cg)
-	pres_st_ac=Presentation.create(title=u'accenture on smart trips',sessn=sessn_st,vendor=vendor_ac)
-	pres_st_cg=Presentation.create(title=u'control group on smart trips',sessn=sessn_st,vendor=vendor_cg)
-	pres_wc_cg=Presentation.create(title=u'control group wireless connectivity',sessn=sessn_wc,vendor=vendor_cg)
-
-	vote_j_bssb_sb=Vote.create(sessn=sessn_bs,presentation=pres_bs_sb,participant=john)
-	vote_p_bssb_sb=Vote.create(sessn=sessn_bs,presentation=pres_bs_sb,participant=paul)
-	vote_g_bssb_cg=Vote.create(sessn=sessn_bs,presentation=pres_bs_cg,participant=george)
-	vote_r_bssb_cg=Vote.create(sessn=sessn_bs,presentation=pres_bs_cg,participant=ringo)
-
-	vote_j_cscs_cg=Vote.create(sessn=sessn_cs,presentation=pres_cs_cg,participant=john)
-	vote_p_cscs_cg=Vote.create(sessn=sessn_cs,presentation=pres_cs_cg,participant=paul)
-	vote_g_cscg_cs=Vote.create(sessn=sessn_cs,presentation=pres_cs_cs,participant=george)
-	vote_r_cscs_cg=Vote.create(sessn=sessn_cs,presentation=pres_cs_cg,participant=ringo)
-
-	vote_j_avac_cg=Vote.create(sessn=sessn_av,presentation=pres_av_cg,participant=john)
-	vote_p_avac_cg=Vote.create(sessn=sessn_av,presentation=pres_av_cg,participant=paul)
-	vote_g_avac_ac=Vote.create(sessn=sessn_av,presentation=pres_av_ac,participant=george)
-	vote_r_avac_cg=Vote.create(sessn=sessn_av,presentation=pres_av_cg,participant=ringo)
-
-	# this should reset John's vote
-	vote_j_bssb_sb=Vote.create(sessn=sessn_bs,presentation=pres_bs_cg,participant=john)
 
 class UserAdmin(ModelView):
 	# Visible columns in the list view
