@@ -130,14 +130,14 @@ class Track(BaseModel):
 	description = TextField(default="is...")
 	active = BooleanField(default=True)
 	slug = CharField(default='',max_length=50)
-	
+
 	def save(self, *args, **kwargs):
 		self.slug = slugify(self.title)
 		return super(Track, self).save(*args, **kwargs)
 
 	def __unicode__(self):
 		return self.title
-		
+
 	def __repr__(self):
 		return '<Track %r>' % (self.title)
 
