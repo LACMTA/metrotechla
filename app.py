@@ -382,11 +382,13 @@ class APresentation(Resource):
 				# print "curvote is %s" %curvote
 				# curvote.score = curvote.score-1
 				msg=msg+"and he voted for presentation %s in session %s. Update!" %(l.sessn,l)
+				bluh="Switching Votes now..."
 				q=Vote.update(presentation=l).where(Vote.sessn==l.sessn,Vote.participant==participnt)
 				q.execute()
 			else:
 				msg=msg+"he hasn't voted in session %s. create(sessn=%s,presentation=%s,participant=%s)" %(l.sessn,l.sessn,l,participnt)
 				Vote.create(sessn=l.sessn,presentation=l,participant=participnt)
+				bluh="Thanks for voting, you can switch votes at any time."
 		except:
 			abort(404, message="Sorry {} something went wrong".format(current_user.email))
 		return {
@@ -397,6 +399,7 @@ class APresentation(Resource):
 			'vendor':l.vendor.title,
 			'score':l.score,
 			'msg':msg,
+			'bluh':bluh,
 			'email':current_user.email,
 		},201
 
@@ -548,8 +551,14 @@ def home():
 	return render_template('index.html', leaderb=printme, current_user=current_user)
 
 @app.route('/flask')
+@login_required
 def hello_world():
 	return 'This comes from Flask ^_^'
+
+@app.route('/votetest')
+@login_required
+def vote_test():
+	return render_template('votetest.html', current_user=current_user)
 
 if __name__ == '__main__':
 	import logging
