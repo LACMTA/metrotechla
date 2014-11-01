@@ -153,13 +153,23 @@ class Sessn(BaseModel):
 		return super(Sessn, self).save(*args, **kwargs)
 
 	def get_scores(self):
+		votecount = Vote.select().where(Vote.sessn==self).count()
 		scorelist = []
 		for p in Presentation.select().where(Presentation.sessn==self):
-			vendr = p.vendor
-			vendortitle = vendr.__unicode__()
-			vendorct = Vote.select().where(Vote.vendor==vendr,Vote.sessn==self).count()
-			scorelist.append({'vendor':vendortitle,'score':vendorct})
+			vendortitle = p.vendor.__unicode__()
+			vendorct = Vote.select().where(Vote.presentation==p).count()
+			print "VENDOR: %s, score: %s, percentage: %s" %(vendortitle,vendorct,p.get_percentage())
+			scorelist.append({'session':self.__unicode__(),
+				'track':self.track.__unicode__(),
+				'presentation':p.__unicode__(),
+				'vendor':vendortitle,
+				'score':vendorct,
+				'percentage':p.get_percentage()})
 		return json.dumps({'sessn':self.__unicode__(),'scores':scorelist})
+
+	def get_votecount(self):
+		votecount = Vote.select().where(Vote.sessn==self).count()
+		return votecount
 
 	def __unicode__(self):
 		return self.title
@@ -196,6 +206,15 @@ class Presentation(BaseModel):
 		score = Vote.select().where(Vote.presentation==self).count()
 		self.score = score
 		return self.score
+		
+	def get_percentage(self):
+		myscore = self.get_score()
+		votecount = self.sessn.get_votecount()
+		try:
+			percentage = int( (myscore*100)/votecount )
+		except:
+			percentage = 0
+		return percentage
 
 	def __unicode__(self):
 		return self.title
@@ -395,6 +414,7 @@ class APresentation(Resource):
 			'title':l.title,
 			'presentation_id':l.id,
 			'score':l.get_score(),
+			'percentage':l.get_percentage(),
 			'session':l.sessn.title,
 			'vendor':l.vendor.title,
 			'score':l.score,
@@ -522,6 +542,30 @@ class PresentationList(Resource):
 				'slug':l.slug,
 			} 
 			for l in mps]
+
+
+# VoteList
+#   shows a list of all votes
+	# sessn = ForeignKeyField(Sessn, related_name='sessionvote')
+	# presentation = ForeignKeyField(Presentation, related_name='presentationvote')
+	# participant = ForeignKeyField(User, related_name='participantvote')
+	# timestamp = DateTimeField(default=datetime.datetime.now)
+	# vendor
+
+class VoteList(Resource):
+	def get(self):
+		mps = Sessn.select()
+		return [
+			{
+				'track':l.track.title,
+				'score':l.presentation.get_score,
+				'count':l.get_votecount,
+				'session':l.sessn.title,
+				'vendor':l.vendor.title,
+				'slug':l.slug,
+			} 
+			for l in mps]
+
 
 ##
 ## Actually setup the Api resource routing here
