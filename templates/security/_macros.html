@@ -11,6 +11,12 @@
   </p>
 {% endmacro %}
 
+{% macro render_pswd_field_with_errors(field) %}
+  <p>
+    {{ field.label }} {{ field(**kwargs)|safe }}
+  </p>
+{% endmacro %}
+
 {% macro render_field(field) %}
   <p>{{ field(**kwargs)|safe }}</p>
 {% endmacro %}

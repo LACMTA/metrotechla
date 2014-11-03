@@ -130,14 +130,14 @@ class Track(BaseModel):
 	description = TextField(default="is...")
 	active = BooleanField(default=True)
 	slug = CharField(default='',max_length=50)
-
+	
 	def save(self, *args, **kwargs):
 		self.slug = slugify(self.title)
 		return super(Track, self).save(*args, **kwargs)
 
 	def __unicode__(self):
 		return self.title
-
+		
 	def __repr__(self):
 		return '<Track %r>' % (self.title)
 
@@ -380,7 +380,6 @@ class APresentation(Resource):
 				'score':l.get_score(),
 				'session':l.sessn.title,
 				'vendor':l.vendor.title,
-				'score':l.score,
 				'slug':l.slug,
 				'email':current_user.email
 			}
@@ -401,13 +400,13 @@ class APresentation(Resource):
 				# print "curvote is %s" %curvote
 				# curvote.score = curvote.score-1
 				msg=msg+"and he voted for presentation %s in session %s. Update!" %(l.sessn,l)
-				bluh="Switching Votes now..."
+				bluh="Vote switched! You can switch votes again at any time by refreshing this page."
 				q=Vote.update(presentation=l).where(Vote.sessn==l.sessn,Vote.participant==participnt)
 				q.execute()
 			else:
 				msg=msg+"he hasn't voted in session %s. create(sessn=%s,presentation=%s,participant=%s)" %(l.sessn,l.sessn,l,participnt)
 				Vote.create(sessn=l.sessn,presentation=l,participant=participnt)
-				bluh="Thanks for voting, you can switch votes at any time."
+				bluh="Thanks for voting! You can switch votes at any time by refreshing this page."
 		except:
 			abort(404, message="Sorry {} something went wrong".format(current_user.email))
 		return {
@@ -417,7 +416,6 @@ class APresentation(Resource):
 			'percentage':l.get_percentage(),
 			'session':l.sessn.title,
 			'vendor':l.vendor.title,
-			'score':l.score,
 			'msg':msg,
 			'bluh':bluh,
 			'email':current_user.email,
@@ -507,10 +505,9 @@ class ATrackSessn(Resource):
 						{
 							'title':l.title,
 							'presentation_id':l.id,
-							'score':l.score,
+							'score':l.get_score(),
 							'session':l.sessn.title,
 							'vendor':l.vendor.title,
-							'score':l.score,
 							'slug':l.slug,
 							'url':'/api/presentation/%s/' %(l.id)
 						} 
@@ -535,10 +532,9 @@ class PresentationList(Resource):
 			{
 				'title':l.title,
 				'presentation_id':l.id,
-				'score':l.score,
+				'score':l.get_score(),
 				'session':l.sessn.title,
 				'vendor':l.vendor.title,
-				'score':l.get_score(),
 				'slug':l.slug,
 			} 
 			for l in mps]
