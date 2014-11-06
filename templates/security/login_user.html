@@ -1,3 +1,4 @@
+{% from "security/_macros.html" import render_field_with_errors, render_pswd_field_with_errors, render_field %}
 <!DOCTYPE html>
 <html>
 <head><script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
@@ -133,24 +134,23 @@ font-size:20px;
 </head>
 <body>
 	  <div class="login-card">
-{% from "security/_macros.html" import render_field_with_errors, render_pswd_field_with_errors, render_field %}
- {% include "security/_messages.html" %}
-<h1>#MetroTechLA: Live Voting</h1>
-<p>Welcome to the Metro Tech LA voting page. Please enter the email address you used to register with on EventBrite to get started.</p>
-<form action="/login" method="POST" name="login_user_form">
-  {{ login_user_form.hidden_tag() }}
- {{ render_field_with_errors(login_user_form.email) }}
-  <div style="display:none">{{ render_pswd_field_with_errors(login_user_form.password) }}</div>
-  <div style="display:none">{{ render_field_with_errors(login_user_form.remember) }}</div>
-  {{ render_field(login_user_form.next) }}
-  <button class="login login-submit" onClick = "loginUser()">Submit</button>
-</form>
+		{% include "security/_messages.html" %}
+		<h1>#MetroTechLA: Live Voting</h1>
+		<p>Welcome to the Metro Tech LA voting page. Please enter the email address you used to register with on EventBrite to get started.</p>
+		<form action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
+			{{ login_user_form.hidden_tag() }}
+			{{ render_field_with_errors(login_user_form.email) }}
+			<div style="display:none">{{ render_pswd_field_with_errors(login_user_form.password) }}</div>
+			<div style="display:none">{{ render_field_with_errors(login_user_form.remember) }}</div>
+			{{ render_field(login_user_form.next) }}
+			<button class="login login-submit" onClick = "loginUser()">Submit</button>
+		</form>
 <script>
 
 loginUser = function(){
 	user = document.getElementById('email').value;
 	document.getElementById('email').value = user; 
-	document.getElementById('password').value = user;
+	document.getElementById('password').value = "MetroTechLA";
 	document.forms["login_user_form"].submit();
 }
 </script>
