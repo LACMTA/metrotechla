@@ -10,7 +10,7 @@
 
 <script type=text/javascript>
 	resetAllScores = function(){
-		var resetAllScores_url = "/api/presentation/";
+		var resetAllScores_url = "{{config.BASE_URL}}/api/presentation/";
 		console.log("resetting all scores");
 		$.ajax(resetAllScores_url, {
 			type: 'GET',
@@ -34,7 +34,7 @@
 	)};
 
 	addVote = function(rID){
-		var addVote_url = "/api/presentation/" + rID + "/";
+		var addVote_url = "{{config.BASE_URL}}/api/presentation/" + rID + "/";
 		console.log("adding a vote");
 		$.ajax(addVote_url, {
 			type: 'PUT',

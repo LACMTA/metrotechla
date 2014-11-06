@@ -15,6 +15,7 @@ class Config(object):
 	SECURITY_RECOVERABLE = False
 	SECURITY_SEND_REGISTER_EMAIL = False
 	SECURITY_DEFAULT_REMEMBER_ME = True
+	BASE_URL = 'http://198.199.92.57'
 
 class ProductionConfig(Config):
 	SECRET_KEY = 'ssshhhhh'
