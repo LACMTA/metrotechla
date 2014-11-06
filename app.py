@@ -70,7 +70,7 @@ class Role(BaseModel, RoleMixin):
 
 class User(BaseModel, UserMixin):
 	email = TextField()
-	password = TextField()
+	password = TextField(default='MetroTechLA')
 	active = BooleanField(default=True)
 	confirmed_at = DateTimeField(null=True)
 
@@ -648,10 +648,14 @@ def home():
 def hello_world():
 	return 'This comes from Flask ^_^'
 
-@app.route('/votetest')
+@app.route('/vote')
 @login_required
 def vote_test():
-	return render_template('votetest.html', current_user=current_user)
+	return render_template('vote.html', current_user=current_user)
+
+@app.route('/result')
+def result_test():
+	return render_template('result.html', current_user=current_user)
 
 if __name__ == '__main__':
 	import logging

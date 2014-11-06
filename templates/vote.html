@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+
+{% block body %}
+
+
+<div class="login-card" style="text-align:center">
+<h1>#MetroTechLA: <span id="header"></span></h1>
+
+<p style="margin-top: 40px;"><i>{{current_user}}</i><br>Vote for your preferred Solution Provider:</p>
+
+<div class="participants" id="participants">
+	<div class="block" id="participant">...</div>
+</div>
+<hr>
+<p class="footer">Open voting until the end of the event at 5pm.<br>You may change your vote for each Session, the latest vote is the final vote.</p>
+</div>
+
+
+
+<script> 
+
+//Getting Track and Session from URL Parameters
+var track = getUrlVars()["track"];
+var session = getUrlVars()["session"];
+
+function getUrlVars() {
+	var vars = {};
+	var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+		vars[key] = value;
+	});
+	return vars;
+}
+
+setPresentations = function() {
+	$.getJSON('/api/track/' + track + '/session/' + session + '/', function(data) {
+		if (!Object.keys) Object.keys = function(o) {
+			if (o !== Object(o))
+			throw new TypeError('Object.keys called on a non-object');
+			var k=[],p;
+			for (p in o) if (Object.prototype.hasOwnProperty.call(o,p)) k.push(p);
+			return k;
+		}
+		
+		var headerTitle = data["title"]
+		document.getElementById("header").innerHTML = headerTitle;
+		
+		var userMarkers = data["presentations"]
+
+		$.each(userMarkers, function(index, value) {
+
+			asa = value["vendor"];
+			p_id = value["presentation_id"];
+			
+			document.getElementById("participant").style.display = "none"; 
+			var iDiv = document.createElement('div');
+			iDiv.id = 'pblock';
+			iDiv.className = 'block';
+			document.getElementById("participants").appendChild(iDiv).innerHTML = "<button onClick='vote(" + p_id + ")'>" + asa + "</button>";
+
+		});
+	})
+	.fail(function() {
+	//When getJSON is unsuccessful	
+	});
+};
+
+setPresentations();
+
+vote = function(p_id){
+
+	var addreply_url = "/api/presentation/" + p_id + "/";
+	$.ajax(addreply_url, {
+	 type: 'PUT',
+	 success:function(data) {
+	 	document.getElementById("participants").innerHTML = "<div class='voteStatus'>" + data.bluh + "</div>";
+	 	console.log(data.bluh);
+	 },
+	 error:function(jqXhr, statusText, error) {
+	 	alert("vote failed")
+	 	console.log(statusText, error);
+	 }
+
+	});
+}
+
+
+</script>
+{% endblock %}
