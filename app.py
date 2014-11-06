@@ -657,6 +657,11 @@ def vote_test():
 def result_test():
 	return render_template('result.html', current_user=current_user)
 
+@app.route('/register', methods=['GET'])
+def register():
+	return render_template('security/register_user.html')
+
+
 if __name__ == '__main__':
 	import logging
 	logging.basicConfig()

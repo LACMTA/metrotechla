@@ -8,6 +8,9 @@ class Config(object):
 	# MAIL_USERNAME = 'username'
 	# MAIL_PASSWORD = 'password'
 	# DATABASE_URI = 'sqlite://:memory:'
+	# FLASK-SECURITY
+	SECURITY_REGISTERABLE = True
+	SECURITY_REGISTER_URL = '/register'
 
 class ProductionConfig(Config):
 	SECRET_KEY = 'ssshhhhh'
