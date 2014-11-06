@@ -2,11 +2,11 @@ class Config(object):
 	SECRET_KEY = 'ssshhhhh'
 	DEBUG = False
 	TESTING = False
-	# MAIL_SERVER = 'smtp.example.com'
-	# MAIL_PORT = 465
-	# MAIL_USE_SSL = True
-	# MAIL_USERNAME = 'username'
-	# MAIL_PASSWORD = 'password'
+	MAIL_SERVER = 'smtp.sendgrid.net'
+	MAIL_PORT = 465
+	MAIL_USE_SSL = True
+	MAIL_USERNAME = 'goodwindo'
+	MAIL_PASSWORD = '9Hi5AgXK96'
 	# DATABASE_URI = 'sqlite://:memory:'
 	# FLASK-SECURITY
 	SECURITY_REGISTERABLE = True
