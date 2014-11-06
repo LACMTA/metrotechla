@@ -26,7 +26,6 @@ from peewee import (
 	DateTimeField,
 	SqliteDatabase,
 	)
-from utils import slugify
 from flask.ext.admin import Admin, BaseView, expose, AdminIndexView
 from flask.ext.admin.contrib.peewee import ModelView
 from flask.ext.security import (
@@ -40,10 +39,16 @@ from flask_security.core import current_user
 from flask_security.utils import logout_user
 from flask_restful_swagger import swagger
 
+from utils import (
+	slugify, 
+	ReverseProxied,
+	)
+
 db = SqliteDatabase('leaderboard.sqlite', check_same_thread=False)
 
 app = Flask(__name__)
 app.config.from_object('config.DevelopmentConfig')
+app.wsgi_app = ReverseProxied(app.wsgi_app)
 
 # Flask-Mail
 # from flask_mail import Mail
