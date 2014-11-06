@@ -34,7 +34,7 @@
 	)};
 
 	addVote = function(rID){
-		var addVote_url = "api/presentation/" + rID + "/";
+		var addVote_url = "/api/presentation/" + rID + "/";
 		console.log("adding a vote");
 		$.ajax(addVote_url, {
 			type: 'PUT',

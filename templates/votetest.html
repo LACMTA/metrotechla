@@ -33,7 +33,7 @@ function getUrlVars() {
 }
 
 setPresentations = function() {
-	$.getJSON($SCRIPT_ROOT + 'api/track/' + track + '/session/' + session + '/', function(data) {
+	$.getJSON($SCRIPT_ROOT + '/api/track/' + track + '/session/' + session + '/', function(data) {
 		if (!Object.keys) Object.keys = function(o) {
 			if (o !== Object(o))
 			throw new TypeError('Object.keys called on a non-object');
