@@ -42,7 +42,6 @@ from flask_restful_swagger import swagger
 from utils import (
 	slugify, 
 	ReverseProxied,
-	crossdomain,
 	)
 
 db = SqliteDatabase('leaderboard.sqlite', check_same_thread=False)
@@ -448,7 +447,6 @@ class APresentation(Resource):
 	)
 
 	@login_required
-	@crossdomain(origin='*')
 	def get(self, presentation_id):
 		abort_if_presentation_doesnt_exist(presentation_id)
 		l = Presentation.get(Presentation.id==presentation_id)
@@ -463,7 +461,6 @@ class APresentation(Resource):
 			}
 
 	@login_required
-	@crossdomain(origin='*')
 	def put(self, presentation_id):
 		msg=""
 		abort_if_presentation_doesnt_exist(presentation_id)
@@ -515,7 +512,6 @@ class APresentation(Resource):
 # TrackList
 #   shows a list of all tracks
 class TrackList(Resource):
-	@crossdomain(origin='*')
 	def get(self):
 		mps = Track.select()
 		return [
@@ -530,7 +526,6 @@ class TrackList(Resource):
 # SessionList
 #   shows a list of all tracks
 class SessnList(Resource):
-	@crossdomain(origin='*')
 	def get(self,track_slug='multi_modal_integration'):
 		if track_slug:
 			tr=Track.get(Track.slug==track_slug)
@@ -561,7 +556,6 @@ class SessnList(Resource):
 # ASessn
 #   shows a list of all sessions by track
 class ASessn(Resource):
-	@crossdomain(origin='*')
 	def get(self, track_slug):
 		if track_slug:
 			tr=Track.get(Track.slug==track_slug)
@@ -577,7 +571,6 @@ class ASessn(Resource):
 # ATrackSessn
 #   shows a list of all sessions by track
 class ATrackSessn(Resource):
-	@crossdomain(origin='*')
 	def get(self, track_slug,sessn_slug):
 		if track_slug:
 			tr=Track.get(Track.slug==track_slug)
@@ -608,7 +601,6 @@ class ATrackSessn(Resource):
 # PresentationList
 #   shows a list of all presentations
 class PresentationList(Resource):
-	@crossdomain(origin='*')
 	def get(self):
 		mps = Presentation.select()
 		return [
