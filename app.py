@@ -42,13 +42,14 @@ from flask_restful_swagger import swagger
 from utils import (
 	slugify, 
 	ReverseProxied,
+	# crossdomain,
 	)
 
 db = SqliteDatabase('leaderboard.sqlite', check_same_thread=False)
 
 app = Flask(__name__)
 app.config.from_object('config.DevelopmentConfig')
-# app.wsgi_app = ReverseProxied(app.wsgi_app)
+app.wsgi_app = ReverseProxied(app.wsgi_app)
 
 # Flask-Mail
 # from flask_mail import Mail
@@ -461,6 +462,7 @@ class APresentation(Resource):
 			}
 
 	@login_required
+	# @crossdomain(origin='*')
 	def put(self, presentation_id):
 		msg=""
 		abort_if_presentation_doesnt_exist(presentation_id)
