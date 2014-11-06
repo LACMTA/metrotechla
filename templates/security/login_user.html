@@ -1,13 +1,12 @@
 {% extends 'base.html' %}
-
+{% from "security/_macros.html" import render_field_with_errors, render_pswd_field_with_errors, render_field %}
 
 {% block body %}
 	  <div class="login-card">
-{% from "security/_macros.html" import render_field_with_errors, render_pswd_field_with_errors, render_field %}
  {% include "security/_messages.html" %}
 <h1>#MetroTechLA: Live Voting</h1>
 <p>Welcome to the Metro Tech LA voting page. Please enter the email address you used to register with on EventBrite to get started.</p>
-<form action="/login" method="POST" name="login_user_form">
+<form action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
   {{ login_user_form.hidden_tag() }}
  {{ render_field_with_errors(login_user_form.email) }}
   <div style="display:none">{{ render_pswd_field_with_errors(login_user_form.password) }}</div>
