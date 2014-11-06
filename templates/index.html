@@ -1,10 +1,17 @@
 {% extends 'base.html' %}
 
 {% block body %}
-	{% autoescape false %}
-		{{leaderb}}
-	{% endautoescape %}
 
+	<div class="login-card">
+		<h1>#MetroTechLA: Live Voting</h1>
+		<p>Welcome! To start voting, scan a QR Code for a session you attended.</p>
+		<form action="/login" method="POST" name="login_user_form">
+		</form>
+	</div>
+
+	<!-- 	{% autoescape false %}
+			{{leaderb}}
+		{% endautoescape %} -->
 
 {% endblock %}
 
